@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./mvnw compile:*)",
+      "Bash(java -version)",
+      "Bash(npx tsc:*)",
+      "Bash(curl -s \"https://api.spoonacular.com/food/ingredients/search?apiKey=c65af6e777974c4e97af070018cb8c3a&query=pasta&number=2\")",
+      "Bash(npm run:*)",
+      "Bash(rm -rf /root/iam-chef-backend/src/main/resources/static)",
+      "Bash(cp -r /root/iamchef-albini/dist /root/iam-chef-backend/src/main/resources/static)",
+      "Bash(for item:*)",
+      "Bash(do mv:*)",
+      "Bash(done)",
+      "Bash(chmod +x mvnw)"
+    ]
+  }
+}
