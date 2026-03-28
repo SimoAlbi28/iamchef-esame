@@ -11,7 +11,11 @@
       "Bash(for item:*)",
       "Bash(do mv:*)",
       "Bash(done)",
-      "Bash(chmod +x mvnw)"
+      "Bash(chmod +x mvnw)",
+      "Bash(npm install:*)",
+      "Bash(find /root/iamchef-esame -name *RegisterRequest* -o -name *AuthResponse* -o -name *LoginRequest*)",
+      "Bash(mvn -version)",
+      "Bash(mvn spring-boot:run)"
     ]
   }
 }
