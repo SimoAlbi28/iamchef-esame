@@ -8,9 +8,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Map;
 
+// Questa classe cattura tutte le eccezioni lanciate dai controller e le trasforma in risposte JSON
+// Senza questa classe, Spring restituirebbe pagine di errore HTML poco utili per il frontend
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    // Questa parte gestisce le eccezioni personalizzate ApiException
+    // Restituisce il messaggio di errore e il codice HTTP definito nell'eccezione
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<Map<String, Object>> handleApiException(ApiException ex) {
         return ResponseEntity.status(ex.getStatus()).body(Map.of(
@@ -19,6 +23,8 @@ public class GlobalExceptionHandler {
         ));
     }
 
+    // Questa parte gestisce gli errori di validazione (es. email non valida, campo vuoto)
+    // Raccoglie tutti gli errori di validazione e li restituisce come un unico messaggio
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldErrors().stream()
@@ -32,6 +38,8 @@ public class GlobalExceptionHandler {
         ));
     }
 
+    // Questa parte gestisce tutte le altre eccezioni non previste (errori generici)
+    // Restituisce un errore 500 (Internal Server Error)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(

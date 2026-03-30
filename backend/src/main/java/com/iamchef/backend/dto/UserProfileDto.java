@@ -1,5 +1,7 @@
 package com.iamchef.backend.dto;
 
+// Questa classe rappresenta i dati del profilo utente che vengono inviati al frontend
+// E' un DTO (Data Transfer Object): serve solo per trasportare dati, non ha logica
 public class UserProfileDto {
 
     private Long id;
@@ -7,8 +9,10 @@ public class UserProfileDto {
     private String email;
     private String dietaryPreferences;
 
+    // Costruttore vuoto
     public UserProfileDto() {}
 
+    // Costruttore con tutti i campi
     public UserProfileDto(Long id, String username, String email, String dietaryPreferences) {
         this.id = id;
         this.username = username;
@@ -16,6 +20,7 @@ public class UserProfileDto {
         this.dietaryPreferences = dietaryPreferences;
     }
 
+    // Getter e Setter
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

@@ -11,13 +11,16 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+// Questa classe gestisce tutte le chiamate all'API esterna Spoonacular
+// Spoonacular e' il servizio che fornisce i dati sulle ricette e gli ingredienti
 @Service
 public class SpoonacularService {
 
-    private final RestTemplate restTemplate;
-    private final String apiKey;
-    private final String baseUrl;
+    private final RestTemplate restTemplate;  // Client HTTP per fare le chiamate all'API
+    private final String apiKey;              // Chiave API per autenticarsi su Spoonacular
+    private final String baseUrl;             // URL base dell'API Spoonacular
 
+    // Costruttore: i valori di apiKey e baseUrl vengono letti dal file application.properties
     public SpoonacularService(RestTemplate restTemplate,
                               @Value("${spoonacular.api.key}") String apiKey,
                               @Value("${spoonacular.api.base-url}") String baseUrl) {
@@ -26,6 +29,8 @@ public class SpoonacularService {
         this.baseUrl = baseUrl;
     }
 
+    // Questa parte cerca ingredienti su Spoonacular in base a una query di testo
+    // Es: query="tomato", number=10 -> restituisce i primi 10 ingredienti che contengono "tomato"
     public String searchIngredients(String query, int number) {
         String url = UriComponentsBuilder.fromHttpUrl(baseUrl + "/food/ingredients/search")
                 .queryParam("apiKey", apiKey)
@@ -35,6 +40,8 @@ public class SpoonacularService {
         return callSpoonacular(url);
     }
 
+    // Questa parte cerca ricette in base agli ingredienti disponibili
+    // Es: ingredients="pomodoro,mozzarella", number=10 -> restituisce ricette con quegli ingredienti
     public String findRecipesByIngredients(String ingredients, int number) {
         String url = UriComponentsBuilder.fromHttpUrl(baseUrl + "/recipes/findByIngredients")
                 .queryParam("apiKey", apiKey)
@@ -44,6 +51,7 @@ public class SpoonacularService {
         return callSpoonacular(url);
     }
 
+    // Questa parte recupera i dettagli completi di una singola ricetta dato il suo ID
     public String getRecipeById(int id) {
         String url = UriComponentsBuilder.fromHttpUrl(baseUrl + "/recipes/" + id + "/information")
                 .queryParam("apiKey", apiKey)
@@ -52,21 +60,25 @@ public class SpoonacularService {
         return callSpoonacular(url);
     }
 
+    // Questo metodo privato esegue la chiamata HTTP a Spoonacular e gestisce gli errori
     private String callSpoonacular(String url) {
         try {
+            // Fa la chiamata GET all'API e restituisce il body della risposta
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             return response.getBody();
         } catch (HttpClientErrorException e) {
-            // 4xx errors from Spoonacular (401 = bad key, 402 = quota exceeded, etc.)
+            // Errori 4xx da Spoonacular (401 = chiave sbagliata, 402 = quota esaurita, ecc.)
             String body = e.getResponseBodyAsString();
             System.err.println("Spoonacular client error " + e.getStatusCode() + ": " + body);
             throw new ApiException("Spoonacular API error: " + e.getStatusCode() + " - " + body,
                     HttpStatus.BAD_GATEWAY);
         } catch (HttpServerErrorException e) {
+            // Errori 5xx: il server di Spoonacular ha un problema
             System.err.println("Spoonacular server error " + e.getStatusCode() + ": " + e.getResponseBodyAsString());
             throw new ApiException("Spoonacular server error: " + e.getStatusCode(),
                     HttpStatus.BAD_GATEWAY);
         } catch (RestClientException e) {
+            // Errore di connessione: non riesce a raggiungere Spoonacular
             System.err.println("Spoonacular connection error: " + e.getMessage());
             throw new ApiException("Cannot connect to Spoonacular: " + e.getMessage(),
                     HttpStatus.BAD_GATEWAY);

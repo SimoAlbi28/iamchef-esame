@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+// Questa classe gestisce la logica delle ricette preferite (aggiungere, rimuovere, visualizzare)
 @Service
 public class FavoriteService {
 
@@ -22,6 +23,7 @@ public class FavoriteService {
         this.userService = userService;
     }
 
+    // Questa parte recupera tutti i preferiti dell'utente e li converte in DTO per il frontend
     public List<FavoriteRecipeDto> getFavorites(String email) {
         User user = userService.findByEmail(email);
         return favoriteRepository.findAllByUserId(user.getId()).stream()
@@ -29,6 +31,8 @@ public class FavoriteService {
                 .toList();
     }
 
+    // Questa parte aggiunge una ricetta ai preferiti dell'utente
+    // Se la ricetta e' gia' nei preferiti, lancia un errore di conflitto (409)
     public FavoriteRecipeDto addFavorite(String email, FavoriteRecipeDto dto) {
         User user = userService.findByEmail(email);
 
@@ -41,12 +45,14 @@ public class FavoriteService {
         return new FavoriteRecipeDto(favorite.getSpoonacularId(), favorite.getTitle(), favorite.getImage(), favorite.getSavedAt());
     }
 
+    // Questa parte rimuove una ricetta dai preferiti dell'utente
     @Transactional
     public void removeFavorite(String email, Integer spoonacularId) {
         User user = userService.findByEmail(email);
         favoriteRepository.deleteByUserIdAndSpoonacularId(user.getId(), spoonacularId);
     }
 
+    // Questa parte controlla se una ricetta e' gia' nei preferiti dell'utente (restituisce true/false)
     public boolean isFavorite(String email, Integer spoonacularId) {
         User user = userService.findByEmail(email);
         return favoriteRepository.existsByUserIdAndSpoonacularId(user.getId(), spoonacularId);

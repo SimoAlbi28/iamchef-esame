@@ -2,15 +2,23 @@ package com.iamchef.backend.dto;
 
 import java.time.LocalDateTime;
 
+// Questa classe rappresenta i dati di una ricetta preferita che vengono inviati al frontend
+// Contiene solo le info necessarie (senza dati sensibili come l'ID dell'utente)
 public class FavoriteRecipeDto {
 
+    // ID della ricetta su Spoonacular
     private Integer spoonacularId;
+    // Titolo della ricetta
     private String title;
+    // URL dell'immagine
     private String image;
+    // Data in cui e' stata salvata come preferita
     private LocalDateTime savedAt;
 
+    // Costruttore vuoto
     public FavoriteRecipeDto() {}
 
+    // Costruttore con tutti i campi
     public FavoriteRecipeDto(Integer spoonacularId, String title, String image, LocalDateTime savedAt) {
         this.spoonacularId = spoonacularId;
         this.title = title;
@@ -18,6 +26,7 @@ public class FavoriteRecipeDto {
         this.savedAt = savedAt;
     }
 
+    // Getter e Setter
     public Integer getSpoonacularId() { return spoonacularId; }
     public void setSpoonacularId(Integer spoonacularId) { this.spoonacularId = spoonacularId; }
 
