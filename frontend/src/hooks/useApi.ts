@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "../components/Toast";
 import { fetchJson, getApiBaseUrl } from "../utils/api";
 
 interface UseApiReturn<T> {
@@ -33,7 +34,15 @@ function useApi<T = any>(url: string): UseApiReturn<T> {
         }
       } catch (err) {
         if (!cancelled) {
-          setError((err as Error).message)
+          let msg = (err instanceof Error && err.message) ? err.message : 'Errore sconosciuto';
+          if (typeof err === 'object' && err !== null && 'message' in err) {
+            try {
+              const parsed = JSON.parse((err as any).message);
+              if (parsed && parsed.errore) msg = parsed.errore;
+            } catch {}
+          }
+          setError(msg)
+          toast.error(msg)
         }
       } finally {
         if (!cancelled) {

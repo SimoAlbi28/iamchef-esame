@@ -1,6 +1,9 @@
 package com.iamchef.backend.service;
 
 import com.iamchef.backend.exception.ApiException;
+
+import jakarta.validation.constraints.Null;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +52,13 @@ public class SpoonacularService {
                 .queryParam("number", number)
                 .toUriString();
         return callSpoonacular(url);
+    }
+
+    // Questa parte cerca ricette in base agli ingredienti disponibili
+    // Es: ingredients="pomodoro,mozzarella", number=10 -> restituisce ricette con quegli ingredienti
+    
+    public String findRecipesByIngredients(Null ingredients, int number) {
+        return new Exception("Spoonacular API error: ingredients parameter is required").getMessage();
     }
 
     // Questa parte recupera i dettagli completi di una singola ricetta dato il suo ID

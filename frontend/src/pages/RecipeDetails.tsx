@@ -13,6 +13,7 @@ import RecipeImage from "../components/card-components/RecipeImage.tsx";
 import { RecipeIngredients } from "../components/card-components/RecipeIngredients.tsx";
 import { fallbackRecipe } from "../mock/mock.ts";
 import { fetchJson, getApiBaseUrl } from "../utils/api";
+import { toast } from "../components/Toast";
 import FavoriteButton from "../components/card-components/FavoriteButton";
 
 export const RecipeDetails = () => {
@@ -103,6 +104,14 @@ export const RecipeDetails = () => {
         if (cancelled) return;
         setFullRecipe(json);
       } catch (err) {
+        let msg = (err instanceof Error && err.message) ? err.message : 'Errore sconosciuto';
+        if (typeof err === 'object' && err !== null && 'message' in err) {
+          try {
+            const parsed = JSON.parse((err as any).message);
+            if (parsed && parsed.errore) msg = parsed.errore;
+          } catch {}
+        }
+        toast.error(msg);
         // if (!cancelled) setError((err as Error).message);
       } finally {
         // if (!cancelled) setLoading(false);

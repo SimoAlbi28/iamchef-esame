@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react"
+import { toast } from "../../components/Toast"
 import { useNavigate } from "react-router-dom"
 import Titlesubtitle from "./components/title-subtitle/TitleSubtitle"
 import { useAuthStore } from "../../store/apiConfigStore"
@@ -63,12 +64,22 @@ const Header = () => {
       if (favRes.ok) {
         const favData = await favRes.json();
         setFavorites(Array.isArray(favData) ? favData : []);
+      } else {
+        const favData = await favRes.json().catch(() => ({}));
+        const msg = favData.errore || favData.error || `Errore: ${favRes.status}`;
+        toast.error(msg);
       }
       if (histRes.ok) {
         const histData = await histRes.json();
         setHistory(Array.isArray(histData) ? histData : []);
+      } else {
+        const histData = await histRes.json().catch(() => ({}));
+        const msg = histData.errore || histData.error || `Errore: ${histRes.status}`;
+        toast.error(msg);
       }
     } catch (err) {
+      let msg = (err instanceof Error && err.message) ? err.message : 'Errore sconosciuto';
+      toast.error(msg);
       console.error("Error fetching menu data:", err);
     }
   }, [token]);

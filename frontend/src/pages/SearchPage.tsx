@@ -1,4 +1,5 @@
 import { useRef } from "react"
+import { toast } from "../components/Toast"
 import { useNavigate } from "react-router-dom"
 import SearchBar from "../components/header/components/search-bar/Searchbar"
 import SelectedList from "../components/header/components/selected-item/SelectedList"
@@ -97,6 +98,15 @@ const SearchPage = () => {
         navigate('/discover');
       } catch (err) {
         console.error('Fetch recipes error', err);
+        let msg = (err instanceof Error && err.message) ? err.message : 'Errore sconosciuto';
+        // Se il backend restituisce un errore con campo "errore" in italiano
+        if (typeof err === 'object' && err !== null && 'message' in err) {
+          try {
+            const parsed = JSON.parse((err as any).message);
+            if (parsed && parsed.errore) msg = parsed.errore;
+          } catch {}
+        }
+        toast.error(msg);
       } finally {
         setIsLoading(false);
       }

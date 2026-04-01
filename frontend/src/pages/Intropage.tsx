@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "../components/Toast";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/apiConfigStore";
 import { getApiBaseUrl } from "../utils/api";
@@ -13,7 +14,6 @@ export function Intropage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   // Se già autenticato, vai alla ricerca
   if (token) {
@@ -23,16 +23,17 @@ export function Intropage() {
 
   const handleSubmit = async () => {
     if (!email.trim() || !password.trim()) {
-      setError("Compila tutti i campi");
+      const msg = "Compila tutti i campi";
+      toast.error(msg);
       return;
     }
     if (!isLogin && !username.trim()) {
-      setError("Inserisci un username");
+      const msg = "Inserisci un username";
+      toast.error(msg);
       return;
     }
 
     setIsLoading(true);
-    setError(null);
 
     try {
       const baseUrl = getApiBaseUrl();
@@ -49,15 +50,18 @@ export function Intropage() {
 
       const data = await response.json();
 
+
       if (!response.ok) {
-        setError(data.error || `Errore: ${response.status}`);
+        const msg = data.errore || data.error || `Errore: ${response.status}`;
+        toast.error(msg);
         return;
       }
 
       setAuth(data.token, { username: data.username, email: data.email });
       navigate("/search");
     } catch (err) {
-      setError(`Errore di connessione: ${(err as Error).message}`);
+      const msg = `Errore di connessione: ${(err as Error).message}`;
+      toast.error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -139,12 +143,7 @@ export function Intropage() {
           </button>
         </div>
 
-        {/* ERROR */}
-        {error && (
-          <p className="text-sm text-red-600 font-medium mb-3">
-            {error}
-          </p>
-        )}
+        {/* ERROR gestito via toast */}
 
         {/* SUBMIT BUTTON */}
         <button
@@ -170,7 +169,6 @@ export function Intropage() {
             type="button"
             onClick={() => {
               setIsLogin(!isLogin);
-              setError(null);
             }}
             className="text-purple-700 font-bold hover:underline cursor-pointer"
           >
